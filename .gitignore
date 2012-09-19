@@ -10,6 +10,7 @@
 setuptools.*
 .DS_Store
 bin/
+build/
 include/
 lib/
 local/
