@@ -4,12 +4,12 @@ import os
 import time
 import uuid
 
-from dateutil.relativedelta import relativedelta
 
 import reddit
 import requests
 
 from bs4 import BeautifulSoup
+from dateutil.relativedelta import relativedelta
 
 INTERVAL = 300
 
@@ -27,9 +27,9 @@ def get_password():
 def get_username():
     return read_line('../.username')
 
-def make_dir(path, mode='0755'):
+def make_dir(path):
     if path and not os.access(path, os.R_OK):
-        return os.mkdir(path, mode)
+        return os.mkdir(path)
 
 
 class Collector(object):
@@ -47,9 +47,9 @@ class RedditCollector(Collector):
     data_dir = 'reddit'
 
     def __init__(self):
-        super(RedditCollector, self).__init__(self)
+        super(RedditCollector, self).__init__()
         make_dir('/'.join([self.parent_data_dir, self.data_dir]))
-        self.user = get_username()
+        self.username = get_username()
         self.password = get_password()
         self.r = reddit.Reddit(user_agent='Gif Search Bot by gmcquillan')
         self.r.login(username=self.username, password=self.password)
