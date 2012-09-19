@@ -1,11 +1,17 @@
 import base64
+import datetime
 import os
+import time
 import uuid
+
+from dateutil.relativedelta import relativedelta
 
 import reddit
 import requests
 
 from bs4 import BeautifulSoup
+
+INTERVAL = 300
 
 def read_line(path):
     """Return the first line from a file."""
@@ -31,6 +37,10 @@ class Collector(object):
 
     def __init__(self):
         make_dir(self.parent_data_dir)
+
+    def process(self):
+        """This function must be overridden."""
+        pass
 
 
 class RedditCollector(Collector):
@@ -83,3 +93,31 @@ class RedditCollector(Collector):
             gif = requests.get(gif_url)
             with open(self.make_file_name, 'w') as f:
                 f.write(gif.content)
+
+    def process(self):
+        self.download_gifs(
+            self.extract_gif_urls(
+                self.get_story_urls()
+            )
+        )
+
+
+def process_collectors(collectors, interval=INTERVAL):
+    now = datetime.datetime.now()
+    next_run = now + relativedelta(seconds=+interval)
+    while 1:
+        now = datetime.datetime.now()
+        if now  < next_run:
+            time.sleep('0.2')
+            continue
+        for collector in collectors:
+            collector.process()
+
+
+def main():
+    collector = RedditCollector()
+    process_collectors([collector])
+
+
+if __name__ == '__main__':
+    main()
