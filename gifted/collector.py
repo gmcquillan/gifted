@@ -1,3 +1,4 @@
+import base64
 import os
 import uuid
 
@@ -75,7 +76,7 @@ class RedditCollector(Collector):
         return gif_urls
 
     def make_file_name(self, suffix='gif'):
-        return '.'.join([str(uuid.uuid4()).replace('-', ''), suffix])
+        return '.'.join([base64.b64encode(str(uuid.uuid4()))[:10] , suffix])
 
     def download_gifs(self, gif_urls):
         for gif_url in gif_urls:
