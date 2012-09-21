@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
 
 INTERVAL = 1800
+USER_AGENT ='Gif Search Bot by gmcquillan'
 
 def read_line(path):
     """Return the first line from a file."""
@@ -37,7 +38,8 @@ class Collector(object):
         make_dir(self.parent_data_dir)
 
     def make_soup(self, url):
-        return BeautifulSoup(requests.get(url).content)
+        headers = {'User-Agent': USER_AGENT}
+        return BeautifulSoup(requests.get(url, headers=headers).content)
 
     def extract_gif_urls(self, soup):
         gif_urls = []
@@ -85,7 +87,7 @@ class RedditCollector(Collector):
         make_dir('/'.join([self.parent_data_dir, self.data_dir]))
         self.username = get_username()
         self.password = get_password()
-        self.r = reddit.Reddit(user_agent='Gif Search Bot by gmcquillan')
+        self.r = reddit.Reddit(user_agent=USER_AGENT)
         self.r.login(username=self.username, password=self.password)
 
     def process(self, num=10):

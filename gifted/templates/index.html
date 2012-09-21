@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block main_content %}
+
+{% if gifs %}
+    <div class="pagination">
+        <ul>
+            <li><a href="#">Prev</a></li>
+            <li><a href="#">1</a></li>
+            <li><a href="#">Next</a></li>
+        </ul>
+    </div> <!-- end pagination -->
+
+    {% for gif in gifs %}
+        <div class="row">
+            <div class="span9 well">
+                <div class="row">
+                    <div class="span5">
+                        <a href="{{gif}}"><img src="{{gif}}" class="img-rounded"></img></a>
+                    </div> <!-- end of span5 -->
+                    <div class="span4">
+                        <form action="" method="post">
+                            <input type="text" placeholder="Type a tag name..." class="input-medium">
+                            <label class="checkbox">
+                                <i class="icon-warning-sign"></i><input type="checkbox"> Flag as inappropriate</input>
+                            </label>
+                            <button type="submit" class="btn">Save</button>
+                        </form>
+                    </div> <!-- end of span4 -->
+                </div> <!-- end of row -->
+            </div> <!-- end span9 -->
+        </div> <!-- end row -->
+    {% endfor %}
+
+{% endif %}
+{% endblock %}
