@@ -15,16 +15,23 @@
             <div class="span9 well">
                 <div class="row">
                     <div class="span5">
-                        <a href="{{gif}}"><img src="{{gif}}" class="img-rounded"></img></a>
+                        <a href="data/{{gif}}"><img src="data/{{gif}}" class="img-rounded"></img></a>
                     </div> <!-- end of span5 -->
                     <div class="span4">
                         <form action="" method="post">
-                            <input type="text" placeholder="Type a tag name..." class="input-medium">
+                            <input type="hidden" name="gif" value="{{gif}}"> 
+                            <input name="tagname" type="text" placeholder="Type a tag name..." class="input-medium">
                             <label class="checkbox">
-                                <i class="icon-warning-sign"></i><input type="checkbox"> Flag as inappropriate</input>
+                                <i class="icon-warning-sign"></i><input name="flag" type="checkbox"> Flag as inappropriate</input>
                             </label>
                             <button type="submit" class="btn">Save</button>
                         </form>
+                        <div class="well .pre-scrollable">
+                            <p>Tags</p>
+                            <p>
+                                <!-- Put tags here -->
+                            </p>
+                        </div><!-- tags div -->
                     </div> <!-- end of span4 -->
                 </div> <!-- end of row -->
             </div> <!-- end span9 -->

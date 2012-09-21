@@ -3,7 +3,6 @@ import hashlib
 import os
 import time
 
-import reddit
 import requests
 
 from bs4 import BeautifulSoup
@@ -11,20 +10,6 @@ from dateutil.relativedelta import relativedelta
 
 INTERVAL = 1800
 USER_AGENT ='Gif Search Bot by gmcquillan'
-
-def read_line(path):
-    """Return the first line from a file."""
-    with open(path, 'r') as f:
-        lines = f.readlines()
-        if len(lines) < 0:
-            return ''
-        return lines[0].split('\n')[0]
-
-def get_password():
-    return read_line('../.password')
-
-def get_username():
-    return read_line('../.username')
 
 def make_dir(path):
     if path and not os.access(path, os.R_OK):
@@ -60,7 +45,7 @@ class Collector(object):
 
     def md5_is_on_disk(self, md5):
         return md5 + '.gif' in os.listdir(
-            '/'.join([self.parent_data_dir, self.data_dir])
+            self.parent_data_dir
         )
 
     def download_gifs(self, gif_urls):
@@ -70,7 +55,7 @@ class Collector(object):
             if self.md5_is_on_disk(md5):
                 continue
             with open('/'.join(
-                [self.parent_data_dir, self.data_dir, md5 + '.gif']
+                [self.parent_data_dir, md5 + '.gif']
             ), 'w') as f:
                 f.write(gif.content)
 
@@ -80,15 +65,10 @@ class Collector(object):
 
 
 class RedditCollector(Collector):
-    data_dir = 'reddit'
 
     def __init__(self):
         super(RedditCollector, self).__init__()
-        make_dir('/'.join([self.parent_data_dir, self.data_dir]))
-        self.username = get_username()
-        self.password = get_password()
-        self.r = reddit.Reddit(user_agent=USER_AGENT)
-        self.r.login(username=self.username, password=self.password)
+        make_dir(self.parent_data_dir)
 
     def process(self, num=10):
         count = 0
