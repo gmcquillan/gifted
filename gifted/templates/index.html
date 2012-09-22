@@ -10,6 +10,19 @@
         </ul>
     </div> <!-- end pagination -->
 
+    {% if tags %}
+        <h4>Tags</h4>
+        <div class="row">
+            <div class="span9 well">
+                {% for tag in tags %}
+                    <div class="span1">
+                        <a href="tags/{{tag}}">{{tag}}</a>
+                    </div> <!-- span1 -->
+                {% endfor %}
+            </div> <!-- end span9 -->
+        </div> <!-- end row -->
+    {% endif %}
+
     {% for gif in gifs %}
         <div class="row">
             <div class="span9 well">
@@ -26,8 +39,14 @@
                             </label>
                             <button type="submit" class="btn">Save</button>
                         </form>
-                        <div class="well .pre-scrollable">
-                            <p>Tags</p>
+                        <div class="well">
+                            {% if gif_tags[gif] %}
+                                {% for tag in gif_tags[gif] %}
+                                <div class="span1">
+                                    <a href="/tags/{{tag}}">{{tag}}</a>
+                                </div><!-- end span1 -->
+                                {% endfor %}
+                            {% endif %}
                             <p>
                                 <!-- Put tags here -->
                             </p>

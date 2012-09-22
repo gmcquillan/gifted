@@ -21,7 +21,11 @@ def create_tags(filename=None):
 
 def get_tags():
     create_tags()
-    return [tag.split('.')[0] for tag in os.listdir('data/tags')]
+    return [
+        tag.split('.')[0] for tag in os.listdir(
+            'data/tags'
+        ) if not tag.endswith('.gif.json')
+    ]
 
 
 def _get_tag_info(filename):
@@ -54,6 +58,17 @@ def get_tag(tag):
 
 def get_image_tags(gif):
     return _get_or_create_tags(gif)
+
+
+def get_images_for_tag(tag):
+    return _get_or_create_tags(tag)['data']
+
+def get_tags_for_images(images):
+    gif_tags = {}
+    for image in images:
+        gif_tags[image] = get_image_tags(image)['data']
+
+    return gif_tags
 
 
 def save_tag_to_image(gif, tag):

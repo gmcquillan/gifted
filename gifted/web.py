@@ -22,6 +22,7 @@ def get_file(subdir, filename):
             filename=filename,
         ))
 
+@app.route('/tags/data/<gif>')
 @app.route('/data/<gif>')
 def get_image(source=None, gif=None):
     return get_file(source, gif)
@@ -52,15 +53,28 @@ def process_post():
 @app.route('/', methods=['POST', 'GET'])
 def index():
 
-    if request.method == 'GET':
-        gifs = process_get()
-    else:
-        gifs = get_file_paths()
+    gifs = process_get()
 
     if request.method == 'POST':
         process_post()
 
-    return render_template('index.html', gifs=gifs)
+    gif_tags = tags.get_tags_for_images(gifs)
+
+    return render_template(
+        'index.html',
+        gifs=gifs,
+        tags=tags.get_tags(),
+        gif_tags=gif_tags
+    )
+
+
+@app.route('/tags/')
+@app.route('/tags/<tag>')
+def tag(tag=None):
+    tag = tag or tags.get_tags()
+    gifs = tags.get_images_for_tag(tag)
+
+    return render_template('index.html', gifs=gifs, tags=[tag])
 
 
 if __name__ == '__main__':
