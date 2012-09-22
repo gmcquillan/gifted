@@ -2,7 +2,7 @@ import json
 import os
 
 
-def create_tags(filename=None, column='images'):
+def create_tags(filename=None):
     tag_dir = 'data/tags'
     if not os.path.exists(tag_dir):
         os.mkdir('data/tags')
@@ -16,7 +16,7 @@ def create_tags(filename=None, column='images'):
             with open(
                 'data/tags/{filename}.json'.format(filename=filename), 'w'
             ) as f:
-                f.write(json.dumps({column:[]}))
+                f.write(json.dumps({'data':[]}))
 
 
 def get_tags():
@@ -31,15 +31,18 @@ def _get_tag_info(filename):
         return json.loads(f.read())
 
 
-def _get_or_create_tags(filename, column):
-    create_tags(filename, column)
+def _get_or_create_tags(filename):
+    create_tags(filename)
     return _get_tag_info(filename)
 
 
-def _save_tag_info(filename, tag_data, column='images'):
-    t = _get_or_create_tags(tag_data, column=column)
-    t[column].append(tag_data)
-    t[column] = list(set(t[column]))
+def _save_tag_info(filename, tag_data):
+    t = _get_or_create_tags(tag_data)
+    print t
+    t['data'].append(tag_data)
+    t['data'] = list(set(t['data']))
+    print tag_data, 'tag_data'
+    print t
     with open(
         'data/tags/{filename}.json'.format(filename=filename), 'w'
     ) as f:
@@ -47,11 +50,11 @@ def _save_tag_info(filename, tag_data, column='images'):
 
 
 def get_tag(tag):
-    return _get_or_create_tags(tag, column='images')
+    return _get_or_create_tags(tag)
 
 
 def get_image_tags(gif):
-    return _get_or_create_tags(gif, column='tags')
+    return _get_or_create_tags(gif)
 
 
 def save_image_to_tag(gif, tag):
@@ -59,7 +62,7 @@ def save_image_to_tag(gif, tag):
 
 
 def save_tag_to_image_idx(gif, tag):
-    return _save_tag_info(tag, gif, column='tags')
+    return _save_tag_info(tag, gif)
 
 
 def save_tag(gif, tag):
