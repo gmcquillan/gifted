@@ -36,9 +36,8 @@ def _get_or_create_tags(filename):
     return _get_tag_info(filename)
 
 
-def _save_tag_info(filename, tag_data):
-    t = _get_or_create_tags(tag_data)
-    print t
+def _add_tag_info(filename, tag_data):
+    t = _get_or_create_tags(filename)
     t['data'].append(tag_data)
     t['data'] = list(set(t['data']))
     print tag_data, 'tag_data'
@@ -57,14 +56,16 @@ def get_image_tags(gif):
     return _get_or_create_tags(gif)
 
 
+def save_tag_to_image(gif, tag):
+    """Saves gif filename in <tag>.json."""
+    return _add_tag_info(gif, tag)
+
+
 def save_image_to_tag(gif, tag):
-    return _save_tag_info(gif, tag)
-
-
-def save_tag_to_image_idx(gif, tag):
-    return _save_tag_info(tag, gif)
+    """Saves tag name in <gif>.json."""
+    return _add_tag_info(tag, gif)
 
 
 def save_tag(gif, tag):
     save_image_to_tag(gif, tag)
-    save_tag_to_image_idx(gif, tag)
+    save_tag_to_image(gif, tag)
