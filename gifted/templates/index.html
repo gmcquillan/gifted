@@ -40,16 +40,15 @@
                             <button type="submit" class="btn">Save</button>
                         </form>
                         <div class="well">
-                            {% if gif_tags[gif] %}
-                                {% for tag in gif_tags[gif] %}
-                                <div class="span1">
-                                    <a href="/tags/{{tag}}">{{tag}}</a>
-                                </div><!-- end span1 -->
-                                {% endfor %}
+                            {% if gif_tags %}
+                                {% if gif_tags[gif] %}
+                                    {% for tag in gif_tags[gif] %}
+                                    <div class="span1">
+                                        <a href="/tags/{{tag}}">{{tag}}</a>
+                                    </div><!-- end span1 -->
+                                    {% endfor %}
+                                {% endif %}
                             {% endif %}
-                            <p>
-                                <!-- Put tags here -->
-                            </p>
                         </div><!-- tags div -->
                     </div> <!-- end of span4 -->
                 </div> <!-- end of row -->

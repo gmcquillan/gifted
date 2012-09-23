@@ -3,6 +3,7 @@ import os
 
 
 def create_tags(filename=None):
+    """Creates tags file.close."""
     tag_dir = 'data/tags'
     if not os.path.exists(tag_dir):
         os.mkdir('data/tags')
@@ -20,6 +21,7 @@ def create_tags(filename=None):
 
 
 def get_tags():
+    """Get a list of all tag names."""
     create_tags()
     return [
         tag.split('.')[0] for tag in os.listdir(
@@ -29,6 +31,7 @@ def get_tags():
 
 
 def _get_tag_info(filename):
+    """Read and parse json from a tag file."""
     with open(
         'data/tags/{filename}.json'.format(filename=filename), 'r'
     ) as f:
@@ -36,16 +39,16 @@ def _get_tag_info(filename):
 
 
 def _get_or_create_tags(filename):
+    """Return dict of tag data, or create file and return empty dict."""
     create_tags(filename)
     return _get_tag_info(filename)
 
 
 def _add_tag_info(filename, tag_data):
+    """Add tag data to a tag file."""
     t = _get_or_create_tags(filename)
     t['data'].append(tag_data)
     t['data'] = list(set(t['data']))
-    print tag_data, 'tag_data'
-    print t
     with open(
         'data/tags/{filename}.json'.format(filename=filename), 'w'
     ) as f:
@@ -53,17 +56,21 @@ def _add_tag_info(filename, tag_data):
 
 
 def get_tag(tag):
+    """Return tag information for a tag."""
     return _get_or_create_tags(tag)
 
 
 def get_image_tags(gif):
+    """Return a list of all the tags relating to a particular gif."""
     return _get_or_create_tags(gif)
 
 
 def get_images_for_tag(tag):
+    """Return a list of gifs relating to a particular tag."""
     return _get_or_create_tags(tag)['data']
 
 def get_tags_for_images(images):
+    """Return all the tags for all images stored locally."""
     gif_tags = {}
     for image in images:
         gif_tags[image] = get_image_tags(image)['data']
@@ -82,5 +89,6 @@ def save_image_to_tag(gif, tag):
 
 
 def save_tag(gif, tag):
+    """Convenience method to save tag data and image meta data."""
     save_image_to_tag(gif, tag)
     save_tag_to_image(gif, tag)
