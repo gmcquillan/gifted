@@ -92,3 +92,46 @@ def save_tag(gif, tag):
     """Convenience method to save tag data and image meta data."""
     save_image_to_tag(gif, tag)
     save_tag_to_image(gif, tag)
+
+
+def delete_image_from_tag(gif_name, tag_name):
+    """Remove gif from tag set."""
+    t = _get_or_create_tags(tag_name)
+    t['data'].remove(gif_name)
+    t['data'] = list(set(t['data']))
+    with open(
+        'data/tags/{tag_name}.json'.format(tag_name=tag_name), 'w'
+    ) as f:
+        f.write(json.dumps(t))
+
+
+def delete_tag_from_image(gif_name, tag_name):
+    """Remove tag from image tag set."""
+    t = _get_or_create_tags(gif_name)
+    t['data'].remove(tag_name)
+    t['data'] = list(set(t['data']))
+    with open(
+        'data/tags/{gif_name}.json'.format(gif_name=gif_name), 'w'
+    ) as f:
+        f.write(json.dumps(t))
+
+
+def delete_tag(gif_name, tag_name):
+    """Remove a tag from a particular gif."""
+    delete_tag_from_image(gif_name, tag_name)
+    delete_image_from_tag(gif_name, tag_name)
+
+
+def delete_image_data(gif_name):
+    """Remove image tag set. E.g. For inapproprate content."""
+    t = _get_or_create_tags(gif_name)
+    # Remove this image from all tags which contain it.
+    for gif_tag in t['data']:
+        delete_image_from_tag(gif_name, gif_tag)
+
+    # Remove the tags belonging to this image
+    os.remove('data/tags/{gif_name}.json'.format(gif_name=gif_name))
+
+    # Remove the image itself.
+    os.remove('data/{gif_name}'.format(gif_name=gif_name))
+

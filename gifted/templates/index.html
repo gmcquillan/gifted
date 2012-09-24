@@ -5,7 +5,6 @@
     <div class="pagination">
         <ul>
             <li><a href="#">Prev</a></li>
-            <li><a href="#">1</a></li>
             <li><a href="#">Next</a></li>
         </ul>
     </div> <!-- end pagination -->
@@ -39,12 +38,17 @@
                             </label>
                             <button type="submit" class="btn">Save</button>
                         </form>
-                        <div class="well">
+                        <div>
                             {% if gif_tags %}
                                 {% if gif_tags[gif] %}
                                     {% for tag in gif_tags[gif] %}
                                     <div class="span1">
-                                        <a href="/tags/{{tag}}">{{tag}}</a>
+                                        <form action="" method="post">
+                                            <input type="hidden" name="gif" value="{{gif}}">
+                                            <input type="hidden" name="gif_tag" value="{{tag}}">
+                                            <button type="submit" class="close">&times;</button>
+                                            <a href="/tags/{{tag}}">{{tag}}</a>
+                                        </form>
                                     </div><!-- end span1 -->
                                     {% endfor %}
                                 {% endif %}

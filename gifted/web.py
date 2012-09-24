@@ -42,12 +42,22 @@ def process_get():
 
 def process_post():
     post_data = request.form
+    print post_data
 
     gif_name = post_data.get('gif')
     tag_name = post_data.get('tagname')
     flag = post_data.get('flag')
+    if flag:
+        tags.delete_image_data(gif_name)
 
-    tags.save_tag(gif_name, tag_name)
+    elif gif_name and tag_name:
+        # If we're flagging a gif, we should remove it from all relevant tags
+        # and remove the file.
+        tags.save_tag(gif_name, tag_name)
+
+    gif_tag = post_data.get('gif_tag')
+    if gif_tag:
+        tags.delete_tag(gif_name, gif_tag)
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -73,8 +83,14 @@ def index():
 def tag(tag=None):
     tag = tag or tags.get_tags()
     gifs = tags.get_images_for_tag(tag)
+    gif_tags = tags.get_tags_for_images(gifs)
 
-    return render_template('index.html', gifs=gifs, tags=[tag])
+    return render_template(
+        'index.html',
+        gifs=gifs,
+        tags=[tag],
+        gif_tags=gif_tags
+    )
 
 
 if __name__ == '__main__':
