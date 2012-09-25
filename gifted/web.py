@@ -2,8 +2,10 @@ import os
 
 from flask import Flask
 from flask import send_file
+from flask import redirect
 from flask import render_template
 from flask import request
+from flask import url_for
 
 import tags
 
@@ -30,7 +32,7 @@ def get_image(source=None, gif=None):
 
 def process_get():
     offset = request.args.get('offset', '')
-    num = request.args.get('num', '25')
+    num = request.args.get('num', '10')
     gifs = get_file_paths()
     if offset:
         gifs = gifs[gifs.index(offset):]
@@ -42,7 +44,6 @@ def process_get():
 
 def process_post():
     post_data = request.form
-    print post_data
 
     gif_name = post_data.get('gif')
     tag_name = post_data.get('tagname')
@@ -59,6 +60,8 @@ def process_post():
     if gif_tag:
         tags.delete_tag(gif_name, gif_tag)
 
+    return redirect(url_for('index'))
+
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -66,7 +69,7 @@ def index():
     gifs = process_get()
 
     if request.method == 'POST':
-        process_post()
+        return process_post()
 
     gif_tags = tags.get_tags_for_images(gifs)
 

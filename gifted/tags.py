@@ -48,7 +48,7 @@ def _add_tag_info(filename, tag_data):
     """Add tag data to a tag file."""
     t = _get_or_create_tags(filename)
     t['data'].append(tag_data)
-    t['data'] = list(set(t['data']))
+    t['data'] = sorted(list(set(t['data'])))
     with open(
         'data/tags/{filename}.json'.format(filename=filename), 'w'
     ) as f:
@@ -98,18 +98,21 @@ def delete_image_from_tag(gif_name, tag_name):
     """Remove gif from tag set."""
     t = _get_or_create_tags(tag_name)
     t['data'].remove(gif_name)
-    t['data'] = list(set(t['data']))
-    with open(
-        'data/tags/{tag_name}.json'.format(tag_name=tag_name), 'w'
-    ) as f:
-        f.write(json.dumps(t))
+    t['data'] = sorted(list(set(t['data'])))
+    if not t['data']:
+        os.remove('data/tags/{tag_name}.json'.format(tag_name=tag_name))
+    else:
+        with open(
+            'data/tags/{tag_name}.json'.format(tag_name=tag_name), 'w'
+        ) as f:
+            f.write(json.dumps(t))
 
 
 def delete_tag_from_image(gif_name, tag_name):
     """Remove tag from image tag set."""
     t = _get_or_create_tags(gif_name)
     t['data'].remove(tag_name)
-    t['data'] = list(set(t['data']))
+    t['data'] = sorted(list(set(t['data'])))
     with open(
         'data/tags/{gif_name}.json'.format(gif_name=gif_name), 'w'
     ) as f:
