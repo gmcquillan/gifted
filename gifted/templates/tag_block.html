@@ -1,0 +1,12 @@
+{% if tags %}
+    <h4>Tags</h4>
+    <div class="row">
+        <div class="span9 well">
+            {% for tag in tags %}
+                <div class="span1">
+                    <a href="/tags/{{tag}}">{{tag}}</a>
+                </div> <!-- span1 -->
+            {% endfor %}
+        </div> <!-- end span9 -->
+    </div> <!-- end row -->
+{% endif %}

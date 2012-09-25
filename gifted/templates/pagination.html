@@ -1,0 +1,14 @@
+<div class="pagination">
+    <ul>
+        {% if pagination.has_prev %}
+            <li><a href="{{ url_for_other_page(pagination.page - 1)}}"> &laquo; Prev</a></li>
+        {% endif %}
+        <!-- <li><strong>{{ page }} of {{pagination.count}}</strong></li> -->
+
+        {% if pagination.has_next %}
+            <li><a href="{{ url_for_other_page(pagination.page + 1) }}">Next &raquo;</a></li>
+        {% endif %}
+    </ul>
+</div> <!-- end pagination -->
+
+

@@ -1,0 +1,40 @@
+{% if gifs %}
+    {% for gif in gifs %}
+        <div class="row">
+            <div class="span9 well">
+                <div class="row">
+                    <div class="span5">
+                        <a href="data/{{gif}}"><img src="data/{{gif}}" class="img-rounded"></img></a>
+                    </div> <!-- end of span5 -->
+                    <div class="span4">
+                        <form action="" method="post">
+                            <input type="hidden" name="gif" value="{{gif}}"> 
+                            <input name="tagname" type="text" placeholder="Type a tag name..." class="input-medium">
+                            <label class="checkbox">
+                                <i class="icon-warning-sign"></i><input name="flag" type="checkbox"> Flag as inappropriate</input>
+                            </label>
+                            <button type="submit" class="btn">Save</button>
+                        </form>
+                        <div>
+                            {% if gif_tags %}
+                                {% if gif_tags[gif] %}
+                                    {% for tag in gif_tags[gif] %}
+                                    <div class="span1">
+                                        <form action="" method="post">
+                                            <input type="hidden" name="gif" value="{{gif}}">
+                                            <input type="hidden" name="gif_tag" value="{{tag}}">
+                                            <button type="submit" class="close">&times;</button>
+                                            <a href="/tags/{{tag}}">{{tag}}</a>
+                                        </form>
+                                    </div><!-- end span1 -->
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
+                        </div><!-- tags div -->
+                    </div> <!-- end of span4 -->
+                </div> <!-- end of row -->
+            </div> <!-- end span9 -->
+        </div> <!-- end row -->
+    {% endfor %}
+{% endif %}
+

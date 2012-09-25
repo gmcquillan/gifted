@@ -1,6 +1,9 @@
 import os
 
+from math import ceil
+
 from flask import Flask
+from flask import abort
 from flask import send_file
 from flask import redirect
 from flask import render_template
@@ -11,6 +14,54 @@ import tags
 
 app = Flask(__name__)
 
+
+class Pagination(object):
+    """Pagination template from Armin.
+
+    http://flask.pocoo.org/snippets/44/
+
+    """
+    def __init__(self, page, per_page, total_count):
+        self.page = page
+        self.per_page = per_page
+        self.total_count = total_count
+
+    @property
+    def pages(self):
+        return int(ceil(self.total_count / float(self.per_page)))
+
+    @property
+    def has_prev(self):
+        return self.page > 1
+
+    @property
+    def has_next(self):
+        return self.page < self.pages
+
+    def iter_pages(self, left_edge=2, left_current=2,
+                   right_current=5, right_edge=2):
+        last = 0
+        for num in xrange(1, self.pages + 1):
+            if num <= left_edge or \
+               (num > self.page - left_current - 1 and \
+                num < self.page + right_current) or \
+               num > self.pages - right_edge:
+                if last + 1 != num:
+                    yield None
+                yield num
+                last = num
+
+
+def url_for_other_page(page):
+    """Programatically route pagenated views."""
+    args = request.view_args.copy()
+    args['page'] = page
+
+    return url_for(request.endpoint, **args)
+
+app.jinja_env.globals['url_for_other_page'] = url_for_other_page
+
+
 def get_file_paths(suffix='.gif'):
     fps = []
     for f in os.listdir('data'):
@@ -19,27 +70,35 @@ def get_file_paths(suffix='.gif'):
 
     return fps
 
+
 def get_file(subdir, filename):
         return send_file('data/{filename}'.format(
             filename=filename,
         ))
 
+
+@app.route('/page/data/<gif>')
 @app.route('/tags/data/<gif>')
 @app.route('/data/<gif>')
 def get_image(source=None, gif=None):
     return get_file(source, gif)
 
 
-def process_get():
-    offset = request.args.get('offset', '')
-    num = request.args.get('num', '10')
+def process_get(page):
+    num = int(request.args.get('num', 10))
     gifs = get_file_paths()
-    if offset:
-        gifs = gifs[gifs.index(offset):]
-    if num:
-        gifs = gifs[:int(num)]
-
-    return gifs
+    pagination = Pagination(page, num, len(gifs))
+    if not gifs and page != 1:
+        abort(404)
+    start = (len(gifs)/num) * page
+    gif_tags = tags.get_tags_for_images(gifs)
+    return render_template(
+        'index.html',
+        pagination=pagination,
+        tags=tags.get_tags(),
+        gifs=gifs[start:start+num],
+        gif_tags=gif_tags
+    )
 
 
 def process_post():
@@ -63,33 +122,26 @@ def process_post():
     return redirect(url_for('index'))
 
 
-@app.route('/', methods=['POST', 'GET'])
-def index():
-
-    gifs = process_get()
-
+@app.route('/', defaults={'page': 1}, methods=['POST', 'GET'])
+@app.route('/page/<int:page>', methods=['POST', 'GET'])
+def index(page):
     if request.method == 'POST':
         return process_post()
 
-    gif_tags = tags.get_tags_for_images(gifs)
-
-    return render_template(
-        'index.html',
-        gifs=gifs,
-        tags=tags.get_tags(),
-        gif_tags=gif_tags
-    )
+    return process_get(page)
 
 
 @app.route('/tags/')
-@app.route('/tags/<tag>')
+@app.route('/tags/<tag>', methods=['POST', 'GET'])
 def tag(tag=None):
+    if request.method == 'POST':
+        return process_post()
     tag = tag or tags.get_tags()
     gifs = tags.get_images_for_tag(tag)
     gif_tags = tags.get_tags_for_images(gifs)
 
     return render_template(
-        'index.html',
+        'tags.html',
         gifs=gifs,
         tags=[tag],
         gif_tags=gif_tags
