@@ -106,7 +106,10 @@ def process_get(page):
 def process_post():
     post_data = request.form
     gif_name = post_data.get('gif')
-    tag_name = post_data.get('tagname')
+    tag_name = post_data.get('tagname', '').strip().replace(
+            '/', ''
+    ).replace(' ', '_').replace('.', '')
+
     flag = post_data.get('flag')
     if flag:
         tags.delete_image_data(gif_name)

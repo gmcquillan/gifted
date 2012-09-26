@@ -50,6 +50,8 @@ class Collector(object):
 
     def download_gifs(self, gif_urls):
         for gif_url in gif_urls:
+            if gif_url.startswith('https'):
+                gif_url.replace('https://', 'http://')
             gif = requests.get(gif_url)
             md5 = hashlib.md5(gif.content).hexdigest()
             if self.md5_is_on_disk(md5):
