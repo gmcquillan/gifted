@@ -10,6 +10,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 
+import collector
 import tags
 
 app = Flask(__name__)
@@ -90,12 +91,13 @@ def process_get(page):
     pagination = Pagination(page, num, len(gifs))
     if not gifs and page != 1:
         abort(404)
-    start = (len(gifs)/num) * page
+
+    start = page * num
     gif_tags = tags.get_tags_for_images(gifs)
     return render_template(
         'index.html',
         pagination=pagination,
-        tags=tags.get_tags(),
+        tags=sorted(tags.get_tags()),
         gifs=gifs[start:start+num],
         gif_tags=gif_tags
     )
@@ -147,6 +149,26 @@ def tag(tag=None):
         tags=[tag],
         gif_tags=gif_tags
     )
+
+
+@app.route('/add/', methods=['POST', 'GET'])
+def add():
+    """Endpoint for adding gif urls manually."""
+    if request.method == 'GET':
+        return render_template(
+            'add.html',
+        )
+
+    post_data = request.form
+    gif_url = post_data.get('url', '')
+    if not gif_url:
+        return redirect(url_for('add'))
+
+    c = collector.Collector()
+    c.download_gifs([gif_url])
+    args = request.view_args.copy()
+
+    return redirect(url_for('index', **args))
 
 
 if __name__ == '__main__':
