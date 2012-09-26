@@ -103,7 +103,6 @@ def process_get(page):
 
 def process_post():
     post_data = request.form
-
     gif_name = post_data.get('gif')
     tag_name = post_data.get('tagname')
     flag = post_data.get('flag')
@@ -119,7 +118,9 @@ def process_post():
     if gif_tag:
         tags.delete_tag(gif_name, gif_tag)
 
-    return redirect(url_for('index'))
+    args = request.view_args.copy()
+
+    return redirect(url_for(request.endpoint, **args))
 
 
 @app.route('/', defaults={'page': 1}, methods=['POST', 'GET'])
