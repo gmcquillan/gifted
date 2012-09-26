@@ -65,7 +65,12 @@ app.jinja_env.globals['url_for_other_page'] = url_for_other_page
 
 def get_file_paths(suffix='.gif'):
     fps = []
-    for f in os.listdir('data'):
+    files = os.listdir('data')
+    files.sort(
+        key=lambda x: os.path.getmtime('data/{x}'.format(x=x))
+    )
+    files.reverse()
+    for f in files:
         if f.endswith(suffix):
             fps.append(f)
 
