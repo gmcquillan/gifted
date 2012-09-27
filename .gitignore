@@ -1,6 +1,7 @@
 *.pyc
 *.bak
 *.log
+*.pid
 *.swp
 *.orig
 *.svn
