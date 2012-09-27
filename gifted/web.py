@@ -97,7 +97,7 @@ def process_get(page):
     if not gifs and page != 1:
         abort(404)
 
-    start = page * num
+    start = page * num - num
     gif_tags = tags.get_tags_for_images(gifs)
     return render_template(
         'index.html',
@@ -147,14 +147,17 @@ def index(page):
 def tag(tag=None):
     if request.method == 'POST':
         return process_post()
-    tag = tag or tags.get_tags()
+    if not tag:
+        tag_names = tags.get_tags()
+    else:
+        tag_names = [tag]
     gifs = tags.get_images_for_tag(tag)
     gif_tags = tags.get_tags_for_images(gifs)
 
     return render_template(
         'tags.html',
         gifs=gifs,
-        tags=[tag],
+        tags=tag_names,
         gif_tags=gif_tags
     )
 

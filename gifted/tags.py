@@ -32,10 +32,13 @@ def get_tags():
 
 def _get_tag_info(filename):
     """Read and parse json from a tag file."""
-    with open(
-        'data/tags/{filename}.json'.format(filename=filename), 'r'
-    ) as f:
-        return json.loads(f.read())
+    try:
+        with open(
+            'data/tags/{filename}.json'.format(filename=filename), 'r'
+        ) as f:
+            return json.loads(f.read())
+    except IOError:
+        return {}
 
 
 def _get_or_create_tags(filename):
@@ -57,7 +60,7 @@ def _add_tag_info(filename, tag_data):
 
 def get_tag(tag):
     """Return tag information for a tag."""
-    return _get_or_create_tags(tag)
+    return _get_tag_info(tag)
 
 
 def get_image_tags(gif):
@@ -67,13 +70,13 @@ def get_image_tags(gif):
 
 def get_images_for_tag(tag):
     """Return a list of gifs relating to a particular tag."""
-    return _get_or_create_tags(tag)['data']
+    return _get_tag_info(tag).get('data', [])
 
 def get_tags_for_images(images):
     """Return all the tags for all images stored locally."""
     gif_tags = {}
     for image in images:
-        gif_tags[image] = get_image_tags(image)['data']
+        gif_tags[image] = get_image_tags(image).get('data', [])
 
     return gif_tags
 
@@ -99,7 +102,7 @@ def delete_image_from_tag(gif_name, tag_name):
     t = _get_or_create_tags(tag_name)
     t['data'].remove(gif_name)
     t['data'] = sorted(list(set(t['data'])))
-    if not t['data']:
+    if len(t.get('data', [])) == 0:
         os.remove('data/tags/{tag_name}.json'.format(tag_name=tag_name))
     else:
         with open(
