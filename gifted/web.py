@@ -115,7 +115,7 @@ def process_post():
     gif_name = post_data.get('gif')
     tag_name = post_data.get('tagname', '').strip().replace(
             '/', ''
-    ).replace(' ', '_').replace('.', '')
+    ).replace(' ', '_').replace('.', '').lower()
 
     flag = post_data.get('flag')
     if flag:
