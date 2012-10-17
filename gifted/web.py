@@ -7,7 +7,6 @@ from flask import abort
 from flask import send_file
 from flask import redirect
 from flask import render_template
-from flask import Response
 from flask import request
 from flask import url_for
 import collector
