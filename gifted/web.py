@@ -9,7 +9,6 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
-
 import collector
 import tags
 
@@ -87,7 +86,10 @@ def get_file(subdir, filename):
 @app.route('/tags/data/<gif>')
 @app.route('/data/<gif>')
 def get_image(source=None, gif=None):
-    return get_file(source, gif)
+    resp = get_file(source, gif)
+    file_path = 'data/%s' % gif
+    resp.headers.add('Content-length', str(os.path.getsize(file_path)))
+    return resp
 
 
 def process_get(page):
