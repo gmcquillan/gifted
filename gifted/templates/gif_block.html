@@ -2,11 +2,11 @@
     {% for gif in gifs %}
         <div class="row">
             <div class="span9 well offset1">
-                <div class="row">
+                <div class="row offset1">
                     <div class="span5">
                         <a href="/data/{{gif}}"><img src="/data/{{gif}}" class="img-rounded"></img></a>
                     </div> <!-- end of span5 -->
-                    <div class="span4">
+                    <div class="span4 offset1">
                         <form action="" method="post">
                             <input type="hidden" name="gif" value="{{gif}}"> 
                             <input name="tagname" type="text" placeholder="Type a tag name..." class="input-medium">
@@ -19,14 +19,14 @@
                             {% if gif_tags %}
                                 {% if gif_tags[gif] %}
                                     {% for tag in gif_tags[gif] %}
-                                    <div class="span1">
+                                    <div "row">
                                         <form action="" method="post">
                                             <input type="hidden" name="gif" value="{{gif}}">
                                             <input type="hidden" name="gif_tag" value="{{tag}}">
                                             <button type="submit" class="close">&times;</button>
                                             <a href="/tags/{{tag}}">{{tag}}</a>
                                         </form>
-                                    </div><!-- end span1 -->
+                                    </div><!-- end row -->
                                     {% endfor %}
                                 {% endif %}
                             {% endif %}
