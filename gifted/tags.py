@@ -10,12 +10,15 @@ def create_tags(filename=None):
     if not os.path.exists(tag_dir):
         os.mkdir('data/tags')
     if filename:
-        if not os.path.exists(
-            '{tag_dir}/{filename}.json'.format(
-                tag_dir=tag_dir,
-                filename=filename
-            )
-        ):
+        file_path = '{tag_dir}/{filename}.json'.format(
+            tag_dir=tag_dir,
+            filename=filename
+        )
+        try:
+            with open(file_path, 'r') as f:
+                json.loads(f.read())
+        except Exception as e:
+            print e
             with open(
                 'data/tags/{filename}.json'.format(filename=filename), 'w'
             ) as f:
@@ -41,6 +44,8 @@ def _get_tag_info(filename):
             return json.loads(f.read())
     except IOError:
         return {}
+    except ValueError:
+        print 'data/tags/{filename}.json'.format(filename=filename)
 
 
 def _get_or_create_tags(filename):
@@ -78,7 +83,11 @@ def get_tags_for_images(images):
     """Return all the tags for all images stored locally."""
     gif_tags = {}
     for image in images:
-        gif_tags[image] = get_image_tags(image).get('data', [])
+        payload = get_image_tags(image)
+        gif_tags[image] = {
+            'data': payload.get('data', []),
+            'meta': payload.get('meta', {}),
+        }
 
     return gif_tags
 

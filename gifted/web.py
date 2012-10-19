@@ -100,13 +100,16 @@ def process_get(page):
         abort(404)
 
     start = page * num - num
-    gif_tags = tags.get_tags_for_images(gifs)
+    gif_payload = tags.get_tags_for_images(gifs)
+    gif_tags = dict((d, gif_payload[d]['data']) for d in gif_payload)
+    gif_meta = dict((d, gif_payload[d]['meta']) for d in gif_payload)
     return render_template(
         'index.html',
         pagination=pagination,
         tags=sorted(tags.get_tags()),
         gifs=gifs[start:start+num],
-        gif_tags=gif_tags
+        gif_tags=gif_tags,
+        gif_meta=gif_meta,
     )
 
 
