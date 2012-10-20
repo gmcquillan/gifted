@@ -51,6 +51,12 @@ class Pagination(object):
                 yield num
                 last = num
 
+def sizeof_fmt(num):
+    for x in ['bytes','KB','MB','GB']:
+        if num < 1024.0 and num > -1024.0:
+            return "%3.1f%s" % (num, x)
+        num /= 1024.0
+    return "%3.1f%s" % (num, 'TB')
 
 def url_for_other_page(page):
     """Programatically route pagenated views."""
@@ -91,6 +97,14 @@ def get_image(source=None, gif=None):
     resp.headers.add('Content-length', str(os.path.getsize(file_path)))
     return resp
 
+def _format_meta_for_gif_payload(gif_payload):
+    return dict(
+        (
+            d, sizeof_fmt(
+                int(gif_payload[d]['meta']['content-length'])
+            )
+        ) for d in gif_payload
+    )
 
 def process_get(page):
     num = int(request.args.get('num', 10))
@@ -102,7 +116,7 @@ def process_get(page):
     start = page * num - num
     gif_payload = tags.get_tags_for_images(gifs)
     gif_tags = dict((d, gif_payload[d]['data']) for d in gif_payload)
-    gif_meta = dict((d, gif_payload[d]['meta']) for d in gif_payload)
+    gif_meta = _format_meta_for_gif_payload(gif_payload)
     return render_template(
         'index.html',
         pagination=pagination,
@@ -157,13 +171,16 @@ def tag(tag=None):
     else:
         tag_names = [tag]
     gifs = tags.get_images_for_tag(tag)
-    gif_tags = tags.get_tags_for_images(gifs)
+    gif_payload = tags.get_tags_for_images(gifs)
+    gif_tags = dict((d, gif_payload[d]['data']) for d in gif_payload)
+    gif_meta = _format_meta_for_gif_payload(gif_payload)
 
     return render_template(
         'tags.html',
         gifs=gifs,
         tags=tag_names,
-        gif_tags=gif_tags
+        gif_tags=gif_tags,
+        gif_meta=gif_meta,
     )
 
 

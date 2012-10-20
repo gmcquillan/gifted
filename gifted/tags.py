@@ -19,10 +19,20 @@ def create_tags(filename=None):
                 json.loads(f.read())
         except Exception as e:
             print e
+            file_path = 'data/tags/{filename}.json'.format(filename=filename)
             with open(
-                'data/tags/{filename}.json'.format(filename=filename), 'w'
+                file_path, 'w'
             ) as f:
-                f.write(json.dumps({'data':[]}))
+                f.write(
+                    json.dumps(
+                        {
+                            'data':[],
+                            'meta': {
+                                'content-length': str(os.path.getsize(file_path))
+                            }
+                        }
+                    )
+                )
 
 
 def get_tags():

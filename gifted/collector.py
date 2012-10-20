@@ -81,7 +81,7 @@ class Collector(object):
                             {
                                 'data': [],
                                 'meta': {
-                                    'content-length': gif.headers.get('content-length')
+                                    'content-length': int(gif.headers.get('content-length'))
                                 }
                             }
                         )
