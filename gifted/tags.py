@@ -7,28 +7,44 @@ import os
 def create_tags(filename=None):
     """Creates tags file.close."""
     tag_dir = 'data/tags'
+    json_file_path = 'data/tags/{filename}.json'.format(
+        filename=filename
+    )
+    gif_file_path = 'data/{filename}'.format(
+        filename=filename
+    )
     if not os.path.exists(tag_dir):
         os.mkdir('data/tags')
     if filename:
-        file_path = '{tag_dir}/{filename}.json'.format(
+        json_file_path = '{tag_dir}/{filename}.json'.format(
             tag_dir=tag_dir,
             filename=filename
         )
         try:
-            with open(file_path, 'r') as f:
-                json.loads(f.read())
+            with open(json_file_path, 'rw') as f:
+                tag_payload = json.loads(f.read())
+                if not tag_payload['meta']:
+                    tag_payload['meta'] = {
+                        'content-length': os.path.getsize(gif_file_path)
+                    }
+                f.write(
+                    json.dumps(
+                        tag_payload
+                    )
+                )
         except Exception as e:
             print e
-            file_path = 'data/tags/{filename}.json'.format(filename=filename)
             with open(
-                file_path, 'w'
+                json_file_path, 'w'
             ) as f:
                 f.write(
                     json.dumps(
                         {
                             'data':[],
                             'meta': {
-                                'content-length': str(os.path.getsize(file_path))
+                                'content-length': str(
+                                    os.path.getsize(json_file_path)
+                                )
                             }
                         }
                     )
