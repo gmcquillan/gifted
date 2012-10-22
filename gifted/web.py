@@ -51,12 +51,14 @@ class Pagination(object):
                 yield num
                 last = num
 
+
 def sizeof_fmt(num):
     for x in ['bytes','KB','MB','GB']:
         if num < 1024.0 and num > -1024.0:
             return "%3.1f%s" % (num, x)
         num /= 1024.0
     return "%3.1f%s" % (num, 'TB')
+
 
 def url_for_other_page(page):
     """Programatically route pagenated views."""
@@ -97,6 +99,7 @@ def get_image(source=None, gif=None):
     resp.headers.add('Content-length', str(os.path.getsize(file_path)))
     return resp
 
+
 def _format_meta_for_gif_payload(gif_payload):
     return dict(
         (
@@ -105,6 +108,7 @@ def _format_meta_for_gif_payload(gif_payload):
             )
         ) for d in gif_payload
     )
+
 
 def process_get(page):
     num = int(request.args.get('num', 10))

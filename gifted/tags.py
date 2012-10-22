@@ -21,26 +21,31 @@ def create_tags(filename=None):
             filename=filename
         )
         try:
-            with open(json_file_path, 'rw') as f:
+            with open(json_file_path, 'r') as f:
                 tag_payload = json.loads(f.read())
-                if not tag_payload['meta']:
+                if not 'meta' in tag_payload:
+                    f.close()
+                    f = open(json_file_path, 'w')
                     tag_payload['meta'] = {
-                        'content-length': os.path.getsize(gif_file_path)
+                        'content-length': str(
+                            os.path.getsize(gif_file_path)
+                        )
                     }
-                f.write(
-                    json.dumps(
-                        tag_payload
+                    f.write(
+                        json.dumps(
+                            tag_payload
+                        )
                     )
-                )
+                    f.close()
         except Exception as e:
-            print e
+            print "oops", e
             with open(
                 json_file_path, 'w'
             ) as f:
                 f.write(
                     json.dumps(
                         {
-                            'data':[],
+                            'data': [],
                             'meta': {
                                 'content-length': str(
                                     os.path.getsize(json_file_path)
