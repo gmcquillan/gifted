@@ -15,6 +15,11 @@
                             </label>
                             <button type="submit" class="btn">Save</button>
                         </form>
+                        {% if gif_meta %}
+                        <div>
+                            {{ gif_meta[gif] }}
+                        </div>
+                        {% endif %}
                         <div>
                             {% if gif_tags %}
                                 {% if gif_tags[gif] %}
