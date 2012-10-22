@@ -110,6 +110,7 @@ def get_images_for_tag(tag):
     """Return a list of gifs relating to a particular tag."""
     return _get_tag_info(tag).get('data', [])
 
+
 def get_tags_for_images(images):
     """Return all the tags for all images stored locally."""
     gif_tags = {}
@@ -182,4 +183,3 @@ def delete_image_data(gif_name):
 
     # Remove the image itself.
     os.remove('data/{gif_name}'.format(gif_name=gif_name))
-

@@ -10,7 +10,8 @@ from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
 
 INTERVAL = 1800
-USER_AGENT ='Gif Search Bot by gmcquillan'
+USER_AGENT = 'Gif Search Bot by gmcquillan'
+
 
 def make_dir(path):
     if path and not os.access(path, os.R_OK):
@@ -61,7 +62,7 @@ class Collector(object):
             md5 = hashlib.md5(gif.content).hexdigest()
             if self.md5_is_on_disk(md5):
                 continue
-            filename =  md5 + '.gif'
+            filename = md5 + '.gif'
             with open('/'.join(
                 [self.parent_data_dir, filename]
             ), 'w') as f:
@@ -81,7 +82,9 @@ class Collector(object):
                             {
                                 'data': [],
                                 'meta': {
-                                    'content-length': int(gif.headers.get('content-length'))
+                                    'content-length': int(
+                                        gif.headers.get('content-length')
+                                    )
                                 }
                             }
                         )
@@ -124,7 +127,7 @@ def process_collectors(collectors, interval=INTERVAL):
     do_process_collectors(collectors)
     while 1:
         now = datetime.datetime.now()
-        if now  < next_run:
+        if now < next_run:
             time.sleep(0.5)
             continue
         do_process_collectors(collectors)

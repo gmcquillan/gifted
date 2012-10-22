@@ -53,7 +53,7 @@ class Pagination(object):
 
 
 def sizeof_fmt(num):
-    for x in ['bytes','KB','MB','GB']:
+    for x in ['bytes', 'KB', 'MB', 'GB']:
         if num < 1024.0 and num > -1024.0:
             return "%3.1f%s" % (num, x)
         num /= 1024.0
@@ -125,7 +125,7 @@ def process_get(page):
         'index.html',
         pagination=pagination,
         tags=sorted(tags.get_tags()),
-        gifs=gifs[start:start+num],
+        gifs=gifs[start:start + num],
         gif_tags=gif_tags,
         gif_meta=gif_meta,
     )
