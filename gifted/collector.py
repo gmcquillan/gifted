@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import json
 import os
 import time
 
@@ -9,7 +10,8 @@ from bs4 import BeautifulSoup
 from dateutil.relativedelta import relativedelta
 
 INTERVAL = 1800
-USER_AGENT ='Gif Search Bot by gmcquillan'
+USER_AGENT = 'Gif Search Bot by gmcquillan'
+
 
 def make_dir(path):
     if path and not os.access(path, os.R_OK):
@@ -49,6 +51,10 @@ class Collector(object):
         )
 
     def download_gifs(self, gif_urls):
+        tag_dir = 'data/tags'
+        if not os.path.exists(tag_dir):
+            os.mkdir(tag_dir)
+
         for gif_url in gif_urls:
             if gif_url.startswith('https'):
                 gif_url.replace('https://', 'http://')
@@ -56,10 +62,33 @@ class Collector(object):
             md5 = hashlib.md5(gif.content).hexdigest()
             if self.md5_is_on_disk(md5):
                 continue
+            filename = md5 + '.gif'
             with open('/'.join(
-                [self.parent_data_dir, md5 + '.gif']
+                [self.parent_data_dir, filename]
             ), 'w') as f:
                 f.write(gif.content)
+
+            if not os.path.exists(
+                '{tag_dir}/{filename}.json'.format(
+                    tag_dir=tag_dir,
+                    filename=filename
+                )
+            ):
+                with open(
+                    'data/tags/{filename}.json'.format(filename=filename), 'w'
+                ) as f:
+                    f.write(
+                        json.dumps(
+                            {
+                                'data': [],
+                                'meta': {
+                                    'content-length': int(
+                                        gif.headers.get('content-length')
+                                    )
+                                }
+                            }
+                        )
+                    )
 
     def process(self):
         """This function must be overridden."""
@@ -98,7 +127,7 @@ def process_collectors(collectors, interval=INTERVAL):
     do_process_collectors(collectors)
     while 1:
         now = datetime.datetime.now()
-        if now  < next_run:
+        if now < next_run:
             time.sleep(0.5)
             continue
         do_process_collectors(collectors)

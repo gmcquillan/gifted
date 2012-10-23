@@ -7,19 +7,53 @@ import os
 def create_tags(filename=None):
     """Creates tags file.close."""
     tag_dir = 'data/tags'
+    json_file_path = 'data/tags/{filename}.json'.format(
+        filename=filename
+    )
+    gif_file_path = 'data/{filename}'.format(
+        filename=filename
+    )
     if not os.path.exists(tag_dir):
         os.mkdir('data/tags')
     if filename:
-        if not os.path.exists(
-            '{tag_dir}/{filename}.json'.format(
-                tag_dir=tag_dir,
-                filename=filename
-            )
-        ):
+        json_file_path = '{tag_dir}/{filename}.json'.format(
+            tag_dir=tag_dir,
+            filename=filename
+        )
+        try:
+            with open(json_file_path, 'r') as f:
+                tag_payload = json.loads(f.read())
+                if not 'meta' in tag_payload:
+                    f.close()
+                    f = open(json_file_path, 'w')
+                    tag_payload['meta'] = {
+                        'content-length': str(
+                            os.path.getsize(gif_file_path)
+                        )
+                    }
+                    f.write(
+                        json.dumps(
+                            tag_payload
+                        )
+                    )
+                    f.close()
+        except Exception as e:
+            print "oops", e
             with open(
-                'data/tags/{filename}.json'.format(filename=filename), 'w'
+                json_file_path, 'w'
             ) as f:
-                f.write(json.dumps({'data':[]}))
+                f.write(
+                    json.dumps(
+                        {
+                            'data': [],
+                            'meta': {
+                                'content-length': str(
+                                    os.path.getsize(json_file_path)
+                                )
+                            }
+                        }
+                    )
+                )
 
 
 def get_tags():
@@ -41,6 +75,8 @@ def _get_tag_info(filename):
             return json.loads(f.read())
     except IOError:
         return {}
+    except ValueError:
+        print 'data/tags/{filename}.json'.format(filename=filename)
 
 
 def _get_or_create_tags(filename):
@@ -74,11 +110,16 @@ def get_images_for_tag(tag):
     """Return a list of gifs relating to a particular tag."""
     return _get_tag_info(tag).get('data', [])
 
+
 def get_tags_for_images(images):
     """Return all the tags for all images stored locally."""
     gif_tags = {}
     for image in images:
-        gif_tags[image] = get_image_tags(image).get('data', [])
+        payload = get_image_tags(image)
+        gif_tags[image] = {
+            'data': payload.get('data', []),
+            'meta': payload.get('meta', {}),
+        }
 
     return gif_tags
 
@@ -142,4 +183,3 @@ def delete_image_data(gif_name):
 
     # Remove the image itself.
     os.remove('data/{gif_name}'.format(gif_name=gif_name))
-
