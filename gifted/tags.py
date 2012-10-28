@@ -31,11 +31,7 @@ def create_tags(filename=None):
                             os.path.getsize(gif_file_path)
                         )
                     }
-                    f.write(
-                        json.dumps(
-                            tag_payload
-                        )
-                    )
+                    f.write(json.dumps(tag_payload))
                     f.close()
         except Exception as e:
             print "oops", e

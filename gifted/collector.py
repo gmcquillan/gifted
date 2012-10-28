@@ -56,39 +56,39 @@ class Collector(object):
             os.mkdir(tag_dir)
 
         for gif_url in gif_urls:
-            if gif_url.startswith('https'):
-                gif_url.replace('https://', 'http://')
-            gif = requests.get(gif_url)
-            md5 = hashlib.md5(gif.content).hexdigest()
-            if self.md5_is_on_disk(md5):
-                continue
-            filename = md5 + '.gif'
-            with open('/'.join(
-                [self.parent_data_dir, filename]
-            ), 'w') as f:
-                f.write(gif.content)
+            try:
+                if gif_url.startswith('https'):
+                    gif_url.replace('https://', 'http://')
+                gif = requests.get(gif_url)
+                md5 = hashlib.md5(gif.content).hexdigest()
+                if self.md5_is_on_disk(md5):
+                    continue
+                filename = md5 + '.gif'
+                with open('/'.join(
+                    [self.parent_data_dir, filename]
+                ), 'w') as f:
+                    f.write(gif.content)
 
-            if not os.path.exists(
-                '{tag_dir}/{filename}.json'.format(
-                    tag_dir=tag_dir,
-                    filename=filename
-                )
-            ):
-                with open(
-                    'data/tags/{filename}.json'.format(filename=filename), 'w'
-                ) as f:
-                    f.write(
-                        json.dumps(
-                            {
+                if not os.path.exists(
+                    '{tag_dir}/{filename}.json'.format(
+                        tag_dir=tag_dir,
+                        filename=filename
+                )):
+                    with open(
+                        'data/tags/{filename}.json'.format(filename=filename), 'w'
+                    ) as f:
+                        f.write(
+                            json.dumps({
                                 'data': [],
                                 'meta': {
                                     'content-length': int(
                                         gif.headers.get('content-length')
                                     )
                                 }
-                            }
+                            })
                         )
-                    )
+            except TypeError:
+                pass
 
     def process(self):
         """This function must be overridden."""
