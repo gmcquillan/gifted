@@ -10,6 +10,7 @@ from flask import render_template
 from flask import request
 from flask import url_for
 import collector
+import json
 import tags
 
 app = Flask(__name__)
@@ -154,6 +155,24 @@ def process_post():
     args = request.view_args.copy()
 
     return redirect(url_for(request.endpoint, **args))
+
+
+@app.context_processor
+def inject_tags():
+    all_tags = tags.get_tags()
+    n = 1
+    all_tags_dicts = []
+    for tag in all_tags:
+        all_tags_dicts.append(
+            {
+                'id': n,
+                'name': tag,
+            }
+        )
+        n = n + 1
+
+    encoded_tags = json.dumps(all_tags_dicts)
+    return dict(all_tags=encoded_tags)
 
 
 @app.route('/', defaults={'page': 1}, methods=['POST', 'GET'])
