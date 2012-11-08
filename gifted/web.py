@@ -1,4 +1,6 @@
+import json
 import os
+import string
 
 from math import ceil
 
@@ -9,9 +11,10 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
+
 import collector
-import json
 import tags
+
 
 app = Flask(__name__)
 
@@ -30,6 +33,10 @@ class Pagination(object):
     @property
     def pages(self):
         return int(ceil(self.total_count / float(self.per_page)))
+
+    @property
+    def current(self):
+        return self.page
 
     @property
     def has_prev(self):
@@ -169,10 +176,26 @@ def inject_tags():
                 'name': tag,
             }
         )
-        n = n + 1
+        n += 1
 
     encoded_tags = json.dumps(all_tags_dicts)
     return dict(all_tags=encoded_tags)
+
+
+def _subdivide_tags(tag_list):
+    """Creates a dictionary of lists based on the first letter of the tags."""
+    sub_tags = {}
+    for item in tag_list:
+        if not item[0] in string.lowercase:
+            continue
+        sub_tags.setdefault(item[0], []).append(item)
+
+    return dict(sub_tags=sub_tags)
+
+
+@app.context_processor
+def inject_tags_by_letter():
+    return _subdivide_tags(tags.get_tags())
 
 
 @app.route('/', defaults={'page': 1}, methods=['POST', 'GET'])

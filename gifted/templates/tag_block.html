@@ -1,8 +1,22 @@
 {% if tags %}
     <h4>Tags</h4>
-          {% for tag in tags %}
+        {% for letter in sub_tags %}
           <div class="row-fluid">
-              <a href="/tags/{{tag}}">{{tag}}</a>
-          </div> <!-- end row -->
-          {% endfor %}
+            <a href="#" id="{{ letter }}_popover" class="btn btn-large" rel="popover"> {{ letter|upper }}</a>
+            <script>
+              var tag_content = "<ul>"
+              {% for tag in sub_tags[letter] %}
+                tag_content = tag_content + '<li><a href="/tags/{{tag}}">{{tag}}</a></li>'
+              {% endfor %}
+              tag_content = tag_content + '</ul>'
+              $('#{{ letter }}_popover').popover({
+                placement : 'right',
+                title : 'Tags for {{ letter|upper }}',
+                content : tag_content,
+                html: true
+              })
+            </script>
+
+          </div><!-- end row -->
+        {% endfor %}
 {% endif %}

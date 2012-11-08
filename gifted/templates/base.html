@@ -20,6 +20,12 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
+    <script src="../static/bootstrap/js/jquery-1.8.1.min.js"></script>
+    <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../static/bootstrap/js/bootstrap-typeahead.js"></script>
+    <script src="../static/js/gifted.js"></script>
+
     <script>
       var all_tags = {{ all_tags|safe }}
     </script>
@@ -33,6 +39,9 @@
   </head>
 
   <body>
+    <!-- Fork me ribbon -->
+    <a href="https://github.com/gmcquillan/gifted"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
@@ -51,10 +60,6 @@
       </div>
     </div>
 
-    <!-- Fork me ribbon -->
-    <a href="https://github.com/gmcquillan/gifted"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
-
-
     <div class="container">
 
         {% block main_content %}
@@ -63,11 +68,7 @@
     </div> <!-- /container -->
 
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="../static/bootstrap/js/jquery-1.8.1.min.js"></script>
-    <script src="../static/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../static/bootstrap/js/bootstrap-typeahead.js"></script>
-    <script src="../static/js/gifted.js"></script>
-    <!--
+        <!--
     <script src="../static/bootstrap/js/bootstrap-transition.js"></script>
     <script src="../static/bootstrap/js/bootstrap-alert.js"></script>
     <script src="../static/bootstrap/js/bootstrap-modal.js"></script>
