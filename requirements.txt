@@ -10,6 +10,7 @@ gunicorn==0.14.6
 ipdb==0.7
 ipython==0.13
 meld3==0.6.9
+ordereddict==1.1
 python-dateutil==2.1
 pytz==2012d
 reddit==1.4.0

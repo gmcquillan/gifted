@@ -2,7 +2,7 @@ import json
 import os
 import string
 
-from collections import OrderedDict
+from ordereddict import OrderedDict
 from math import ceil
 
 from flask import Flask
