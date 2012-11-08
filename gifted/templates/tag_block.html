@@ -10,7 +10,7 @@
               {% endfor %}
               tag_content = tag_content + '</ul>'
               $('#{{ letter }}_popover').popover({
-                placement : 'right',
+                placement : 'bottom',
                 title : 'Tags for {{ letter|upper }}',
                 content : tag_content,
                 html: true
