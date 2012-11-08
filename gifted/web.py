@@ -2,6 +2,7 @@ import json
 import os
 import string
 
+from collections import OrderedDict
 from math import ceil
 
 from flask import Flask
@@ -189,6 +190,10 @@ def _subdivide_tags(tag_list):
         if not item[0] in string.lowercase:
             continue
         sub_tags.setdefault(item[0], []).append(item)
+
+    sub_tags = OrderedDict(
+        [(k, sub_tags[k]) for k in sorted(sub_tags, key=sub_tags.get)]
+    )
 
     return dict(sub_tags=sub_tags)
 
